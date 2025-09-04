@@ -1,26 +1,33 @@
-local fn = vim.fn
-
-vim.cmd([[
-  augroup SafeQuit
-    autocmd!
-    autocmd QuitPre * lua require("safequit").check_dirty_buffers()
-  augroup END
-]])
-
 local M = {}
+
 function M.check_dirty_buffers()
-  local files = fn.getbufinfo({buflisted=1})
-  local filenames = {}
+  local files = vim.fn.getbufinfo({ buflisted = 1 })
+  local dirty_buffers = {}
   for _, buf in ipairs(files) do
-    table.insert(filenames, buf.name)
+      local buftype = vim.api.nvim_get_option_value("buftype", {buf = buf.bufnr})
+      if buf.changed and buftype == "" then
+          table.insert(dirty_buffers, buf)
+      end
   end
 
-  -- CLI call
-  local cli = "nvim-safequit"
-  local json = fn.system(cli .. " --files" .. table.concat(filenames, " ") .. "--json")
-  local result = fn.json_decode(json)
-  if #result.dirty > 1 then
-    -- run wqa automatically
-    vim.cmd("wqa")
+  if #dirty_buffers > 1 then
+      local filenames = {}
+      for _, buf in ipairs(dirty_buffers) do
+        table.insert(filenames, buf.name)
+      end
+      filenames = table.concat(filenames, ", ")
+
+      vim.notify("Dirty buffers: " .. filenames)
+      vim.cmd("wqa")
   end
 end
+
+function M.setup()
+  local group = vim.api.nvim_create_augroup("SafeQuit", { clear = true })
+  vim.api.nvim_create_autocmd("QuitPre", {
+    group = group,
+    callback = M.check_dirty_buffers
+  })
+end
+
+return M
