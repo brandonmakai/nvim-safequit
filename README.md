@@ -28,7 +28,7 @@ git clone https://github.com/brandonmakai/safequit.nvim.git
 Copy the Lua plugin to your Neovim config directory:
 
 ```bash 
-cp lua/safequit.lua ~/.config/nvim/lua/
+cd safequit.nvim && cp lua/safequit/init.lua ~/.config/nvim/lua/
 ```
 
 Then add to your init.lua:
