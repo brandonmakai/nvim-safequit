@@ -2,7 +2,7 @@
 
 **Prevent losing unsaved files in Neovim with a lightweight plugin.**
 
-`nvim-safequit` is a minimal Neovim plugin that ensures you never accidentally quit a session with multiple unsaved buffers. It’s perfect for power users who edit multiple files at once and want an extra safety net.
+`nvim-safequit` is a minimal Neovim plugin that ensures you never accidentally quit a session with multiple unsaved buffers. It’s perfect for Neovim users who edit multiple files at once and want an extra safety net.
 
 ---
 
