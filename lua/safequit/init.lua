@@ -2,11 +2,15 @@ local M = {}
 
 function M.check_dirty_buffers()
   local files = vim.fn.getbufinfo({ buflisted = 1 })
-  local dirty_buffers = {}
+  if #files <= 1 then
+    return
+  end
 
+  local dirty_buffers = {}
   for _, buf in ipairs(files) do
       local buftype = vim.api.nvim_get_option_value("buftype", {buf = buf.bufnr})
-      if buf.changed and buftype == "" then
+      local readonly = vim.api.nvim_get_option_value("readonly", {buf = buf.bufnr})
+      if buf.changed and buftype == "" and not readonly then
           table.insert(dirty_buffers, buf.name)
       end
   end
